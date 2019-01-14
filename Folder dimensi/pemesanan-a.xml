@@ -1,0 +1,84 @@
+<Schema name="pemesanan-a">
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="dim-pelanggan">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allPelanggan" primaryKey="sk">
+      <Table name="dim_pelanggan">
+      </Table>
+      <Level name="propinsi" visible="true" table="dim_pelanggan" column="propinsi" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="kota" visible="true" table="dim_pelanggan" column="kota" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="perusahaan" visible="true" table="dim_pelanggan" column="nama_perusahaan" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="dim-produk">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allProduk" primaryKey="sk">
+      <Table name="dim_produk">
+      </Table>
+      <Level name="kategori" visible="true" table="dim_produk" column="kategori" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="produk" visible="true" table="dim_produk" column="nama_produk" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="TimeDimension" visible="true" highCardinality="false" name="dim-waktu">
+    <Hierarchy name="satu" visible="true" hasAll="true" allMemberName="allWaktu" primaryKey="sk">
+      <Table name="dim_waktu">
+      </Table>
+      <Level name="tahun" visible="true" table="dim_waktu" column="tahun" type="Integer" uniqueMembers="false" levelType="TimeYears" hideMemberIf="Never">
+      </Level>
+      <Level name="bulan" visible="true" table="dim_waktu" column="nama_bulan" type="String" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+      </Level>
+      <Level name="tanggal" visible="true" table="dim_waktu" column="hari" type="Integer" uniqueMembers="false" levelType="TimeDays" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Cube name="cust-prod-time" visible="true" cache="true" enabled="true">
+    <Table name="fakta_pesanan">
+    </Table>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-produk" name="dimensi-produk" visible="true" foreignKey="dim_produk_sk" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="nilai" column="nilai" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="jml_data" column="id" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="trx" column="kode_pesan" aggregator="distinct count" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="prod-cust-time" visible="true" cache="true" enabled="true">
+    <Table name="fakta_pesanan">
+    </Table>
+    <DimensionUsage source="dim-produk" name="dimensi-produk" visible="true" foreignKey="dim_produk_sk" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="nilai" column="nilai" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="jml_data" column="id" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="trx" column="kode_pesan" aggregator="distinct-count" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="time-prod-cust" visible="true" cache="true" enabled="true">
+    <Table name="fakta_pesanan">
+    </Table>
+    <DimensionUsage source="dim-waktu" name="dimensi-waktu" visible="true" foreignKey="tgl_bayar" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-produk" name="dimensi-produk" visible="true" foreignKey="dim_produk_sk" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="dim-pelanggan" name="dimensi-pelanggan" visible="true" foreignKey="dim_pelanggan_sk" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="nilai" column="nilai" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="jml_data" column="dim_produk_sk" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="trx" column="kode_pesan" aggregator="distinct-count" visible="true">
+    </Measure>
+  </Cube>
+</Schema>
